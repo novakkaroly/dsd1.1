@@ -1,84 +1,331 @@
-import { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DSD – Interaktív gyakorlás / Interaktive Übungen</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
-export default function DSDPracticePage() {
-  const [answer, setAnswer] = useState("");
-  const [checked, setChecked] = useState(false);
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #1a1a6e 0%, #2d5be3 50%, #0f9b8e 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem;
+    }
 
-  const correct = "weil ich später in Deutschland studieren möchte";
+    header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
 
-  return (
-    <div className="min-h-screen p-6 bg-gradient-to-br from-blue-50 to-indigo-100">
-      <h1 className="text-3xl font-bold mb-6 text-center">DSD – Interaktív gyakorlás / Interaktive Übungen</h1>
+    header h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: #ffffff;
+      text-shadow: 0 2px 12px rgba(0,0,0,0.4);
+      letter-spacing: 1px;
+      line-height: 1.2;
+    }
 
-      <Tabs defaultValue="hu" className="max-w-3xl mx-auto">
-        <TabsList className="grid grid-cols-2 mb-6">
-          <TabsTrigger value="hu">Magyar</TabsTrigger>
-          <TabsTrigger value="de">Deutsch</TabsTrigger>
-        </TabsList>
+    header p.subtitle {
+      color: #c7d9ff;
+      font-size: 1rem;
+      margin-top: 0.5rem;
+      font-style: italic;
+    }
 
-        <TabsContent value="hu">
-          <Card className="rounded-2xl shadow-lg">
-            <CardContent className="p-6 space-y-4">
-              <h2 className="text-xl font-semibold">Íráskészség – DSD I mintafeladat</h2>
-              <p>
-                Egészítsd ki a mondatot!
-              </p>
-              <p className="italic">
-                „Deutsch lerne ich, …"
-              </p>
-              <input
-                className="w-full p-2 border rounded"
-                placeholder="Írd ide a válaszod!"
-                value={answer}
-                onChange={(e) => setAnswer(e.target.value)}
-              />
-              <Button onClick={() => setChecked(true)}>Ellenőrzés</Button>
-              {checked && (
-                <p className={answer === correct ? "text-green-600" : "text-red-600"}>
-                  {answer === correct
-                    ? "Helyes válasz! ✅"
-                    : `Nem teljesen jó. Egy lehetséges válasz: "${correct}"`}
-                </p>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
+    .badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      color: #fff;
+      border-radius: 50px;
+      padding: 0.3rem 1rem;
+      font-size: 0.85rem;
+      margin-top: 0.8rem;
+      backdrop-filter: blur(4px);
+    }
 
-        <TabsContent value="de">
-          <Card className="rounded-2xl shadow-lg">
-            <CardContent className="p-6 space-y-4">
-              <h2 className="text-xl font-semibold">Schreiben – Beispielaufgabe (DSD I)</h2>
-              <p>
-                Ergänzen Sie den Satz!
-              </p>
-              <p className="italic">
-                „Deutsch lerne ich, …"
-              </p>
-              <input
-                className="w-full p-2 border rounded"
-                placeholder="Schreiben Sie Ihre Antwort hier!"
-                value={answer}
-                onChange={(e) => setAnswer(e.target.value)}
-              />
-              <Button onClick={() => setChecked(true)}>Überprüfen</Button>
-              {checked && (
-                <p className={answer === correct ? "text-green-600" : "text-red-600"}>
-                  {answer === correct
-                    ? "Richtige Antwort! ✅"
-                    : `Nicht ganz richtig. Eine mögliche Lösung: "${correct}"`}
-                </p>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+    .tabs {
+      display: flex;
+      gap: 0;
+      background: rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 5px;
+      margin-bottom: 2rem;
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
 
-      <p className="text-center text-sm text-gray-600 mt-6">
-        A feladatok a DSD vizsga követelményrendszeréhez igazodó, saját készítésű gyakorlóanyagok.
-      </p>
+    .tab-btn {
+      flex: 1;
+      padding: 0.65rem 2.5rem;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      background: transparent;
+      color: rgba(255,255,255,0.7);
+    }
+
+    .tab-btn.active {
+      background: #ffffff;
+      color: #1a1a6e;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+
+    .card {
+      background: rgba(255,255,255,0.97);
+      border-radius: 24px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+      padding: 2.5rem;
+      width: 100%;
+      max-width: 680px;
+      animation: fadeIn 0.4s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .card h2 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #1a1a6e;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .card h2::before {
+      content: '✍️';
+      font-size: 1.3rem;
+    }
+
+    .instruction {
+      color: #555;
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .sentence {
+      font-style: italic;
+      font-size: 1.15rem;
+      color: #2d5be3;
+      background: #eef2ff;
+      border-left: 4px solid #2d5be3;
+      border-radius: 6px;
+      padding: 0.6rem 1rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      align-items: center;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      padding: 0.75rem 1rem;
+      border: 2px solid #c0cbe8;
+      border-radius: 12px;
+      font-size: 1rem;
+      outline: none;
+      transition: border 0.2s;
+      color: #222;
+    }
+
+    input[type="text"]:focus {
+      border-color: #2d5be3;
+      box-shadow: 0 0 0 3px rgba(45,91,227,0.15);
+    }
+
+    .btn-check {
+      padding: 0.75rem 1.4rem;
+      background: linear-gradient(135deg, #2d5be3, #0f9b8e);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.15s;
+      white-space: nowrap;
+    }
+
+    .btn-check:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    .btn-reset {
+      display: inline-block;
+      margin-top: 0.4rem;
+      background: none;
+      border: none;
+      color: #2d5be3;
+      cursor: pointer;
+      font-size: 0.9rem;
+      text-decoration: underline;
+      padding: 0;
+    }
+
+    .result {
+      border-radius: 12px;
+      padding: 0.9rem 1.2rem;
+      font-size: 1rem;
+      font-weight: 500;
+      margin-top: 0.5rem;
+      display: none;
+    }
+
+    .result.correct {
+      background: #d4f5e9;
+      color: #1a7a4a;
+      border: 1.5px solid #6edcb0;
+      display: block;
+    }
+
+    .result.wrong {
+      background: #fde8e8;
+      color: #b91c1c;
+      border: 1.5px solid #f9a8a8;
+      display: block;
+    }
+
+    .solution {
+      margin-top: 0.6rem;
+      background: #f0f4ff;
+      border-radius: 10px;
+      padding: 0.6rem 1rem;
+      color: #1a1a6e;
+      font-size: 0.95rem;
+    }
+
+    .solution span {
+      font-weight: 700;
+      color: #2d5be3;
+    }
+
+    footer {
+      margin-top: 2.5rem;
+      color: rgba(255,255,255,0.65);
+      font-size: 0.85rem;
+      text-align: center;
+      max-width: 500px;
+    }
+
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>DSD &ndash; Interaktív gyakorlás<br><span style="font-size:1.5rem;font-weight:600;">Interaktive Übungen</span></h1>
+    <p class="subtitle">Deutsches Sprachdiplom &bull; DSD I &bull; Íráskészség / Schreiben</p>
+    <span class="badge">&#127466;&#127482; Magyar &nbsp;|&nbsp; &#127465;&#127466; Deutsch</span>
+  </header>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('hu', this)">&#127466;&#127482; Magyar</button>
+    <button class="tab-btn" onclick="switchTab('de', this)">&#127465;&#127466; Deutsch</button>
+  </div>
+
+  <!-- Magyar fül -->
+  <div id="tab-hu" class="card">
+    <h2>Íráskészség &ndash; DSD I mintafeladat</h2>
+    <p class="instruction">Egészítsd ki a mondatot!</p>
+    <div class="sentence">&bdquo;Deutsch lerne ich, &hellip;&ldquo;</div>
+    <div class="input-row">
+      <input type="text" id="input-hu" placeholder="Îrd ide a válaszodat!" onkeydown="if(event.key==='Enter') check('hu')" />
+      <button class="btn-check" onclick="check('hu')">Ellenőrzés</button>
     </div>
-  );
-}
+    <div id="result-hu" class="result"></div>
+    <div id="solution-hu" class="solution hidden"></div>
+    <button class="btn-reset" onclick="reset('hu')">&#8635; Újra próbálom</button>
+  </div>
+
+  <!-- Deutsch fül -->
+  <div id="tab-de" class="card hidden">
+    <h2>Schreiben &ndash; Beispielaufgabe (DSD I)</h2>
+    <p class="instruction">Ergänzen Sie den Satz!</p>
+    <div class="sentence">&bdquo;Deutsch lerne ich, &hellip;&ldquo;</div>
+    <div class="input-row">
+      <input type="text" id="input-de" placeholder="Schreiben Sie Ihre Antwort hier!" onkeydown="if(event.key==='Enter') check('de')" />
+      <button class="btn-check" onclick="check('de')">Überprüfen</button>
+    </div>
+    <div id="result-de" class="result"></div>
+    <div id="solution-de" class="solution hidden"></div>
+    <button class="btn-reset" onclick="reset('de')">&#8635; Nochmals versuchen</button>
+  </div>
+
+  <footer>
+    A feladatok a DSD vizsga követelményrendszeréhez igazodó, saját készítésű gyakorlóanyagok.<br>
+    Die Aufgaben sind selbst erstellte Übungsmaterialien gemäß den DSD-Prüfungsanforderungen.
+  </footer>
+
+  <script>
+    const correct = "weil ich später in Deutschland studieren möchte";
+
+    function switchTab(lang, btn) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('tab-hu').classList.add('hidden');
+      document.getElementById('tab-de').classList.add('hidden');
+      document.getElementById('tab-' + lang).classList.remove('hidden');
+    }
+
+    function normalize(str) {
+      return str.trim().toLowerCase()
+        .replace(/[ä]/g,'ae').replace(/[ö]/g,'oe').replace(/[ü]/g,'ue').replace(/[ß]/g,'ss')
+        .replace(/[^a-z0-9\s]/g,'').replace(/\s+/g,' ');
+    }
+
+    function check(lang) {
+      const input = document.getElementById('input-' + lang).value;
+      const resultEl = document.getElementById('result-' + lang);
+      const solutionEl = document.getElementById('solution-' + lang);
+
+      if (!input.trim()) {
+        resultEl.className = 'result wrong';
+        resultEl.textContent = lang === 'hu' ? '⚠️ Kérlek írj valamit!' : '⚠️ Bitte etwas eingeben!';
+        solutionEl.classList.add('hidden');
+        return;
+      }
+
+      const isCorrect = normalize(input) === normalize(correct);
+
+      if (isCorrect) {
+        resultEl.className = 'result correct';
+        resultEl.textContent = lang === 'hu' ? '✅ Helyes válasz! Bravó!' : '✅ Richtige Antwort! Sehr gut!';
+        solutionEl.classList.add('hidden');
+      } else {
+        resultEl.className = 'result wrong';
+        resultEl.textContent = lang === 'hu' ? '❌ Nem teljesen jó. Egy lehetséges helyes válasz:' : '❌ Nicht ganz richtig. Eine mögliche Lösung:';
+        solutionEl.classList.remove('hidden');
+        solutionEl.innerHTML = '<span>' + correct + '</span>';
+      }
+    }
+
+    function reset(lang) {
+      document.getElementById('input-' + lang).value = '';
+      const resultEl = document.getElementById('result-' + lang);
+      resultEl.className = 'result';
+      resultEl.textContent = '';
+      document.getElementById('solution-' + lang).classList.add('hidden');
+      document.getElementById('input-' + lang).focus();
+    }
+  </script>
+
+</body>
+</html>
