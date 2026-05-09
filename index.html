@@ -1,0 +1,84 @@
+import { useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+
+export default function DSDPracticePage() {
+  const [answer, setAnswer] = useState("");
+  const [checked, setChecked] = useState(false);
+
+  const correct = "weil ich später in Deutschland studieren möchte";
+
+  return (
+    <div className="min-h-screen p-6 bg-gradient-to-br from-blue-50 to-indigo-100">
+      <h1 className="text-3xl font-bold mb-6 text-center">DSD – Interaktív gyakorlás / Interaktive Übungen</h1>
+
+      <Tabs defaultValue="hu" className="max-w-3xl mx-auto">
+        <TabsList className="grid grid-cols-2 mb-6">
+          <TabsTrigger value="hu">Magyar</TabsTrigger>
+          <TabsTrigger value="de">Deutsch</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="hu">
+          <Card className="rounded-2xl shadow-lg">
+            <CardContent className="p-6 space-y-4">
+              <h2 className="text-xl font-semibold">Íráskészség – DSD I mintafeladat</h2>
+              <p>
+                Egészítsd ki a mondatot!
+              </p>
+              <p className="italic">
+                „Deutsch lerne ich, …"
+              </p>
+              <input
+                className="w-full p-2 border rounded"
+                placeholder="Írd ide a válaszod!"
+                value={answer}
+                onChange={(e) => setAnswer(e.target.value)}
+              />
+              <Button onClick={() => setChecked(true)}>Ellenőrzés</Button>
+              {checked && (
+                <p className={answer === correct ? "text-green-600" : "text-red-600"}>
+                  {answer === correct
+                    ? "Helyes válasz! ✅"
+                    : `Nem teljesen jó. Egy lehetséges válasz: "${correct}"`}
+                </p>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="de">
+          <Card className="rounded-2xl shadow-lg">
+            <CardContent className="p-6 space-y-4">
+              <h2 className="text-xl font-semibold">Schreiben – Beispielaufgabe (DSD I)</h2>
+              <p>
+                Ergänzen Sie den Satz!
+              </p>
+              <p className="italic">
+                „Deutsch lerne ich, …"
+              </p>
+              <input
+                className="w-full p-2 border rounded"
+                placeholder="Schreiben Sie Ihre Antwort hier!"
+                value={answer}
+                onChange={(e) => setAnswer(e.target.value)}
+              />
+              <Button onClick={() => setChecked(true)}>Überprüfen</Button>
+              {checked && (
+                <p className={answer === correct ? "text-green-600" : "text-red-600"}>
+                  {answer === correct
+                    ? "Richtige Antwort! ✅"
+                    : `Nicht ganz richtig. Eine mögliche Lösung: "${correct}"`}
+                </p>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+
+      <p className="text-center text-sm text-gray-600 mt-6">
+        A feladatok a DSD vizsga követelményrendszeréhez igazodó, saját készítésű gyakorlóanyagok.
+      </p>
+    </div>
+  );
+}
